@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var Schema = mongoose.Schema;
 
 const activitySchema = new mongoose.Schema({
     name: { type: String, required: true, unique: true },
