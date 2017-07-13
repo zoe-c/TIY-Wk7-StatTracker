@@ -17,14 +17,14 @@ const userSchema= new mongoose.Schema({
 //NOTE: uncomment after you add a few users to the collection
 // auth will be required for all routes... store this function in a var for calls in routes?
 
-// userSchema.pre('save', function (next) {
-//    if (!this.isModified('password')) {
-//       return next();
-//    }
-//    var hash = bcrypt.hashSync(this.password, 8);
-//    this.password = hash;
-//    next();
-// })
+userSchema.pre('save', function (next) {
+   if (!this.isModified('password')) {
+      return next();
+   }
+   var hash = bcrypt.hashSync(this.password, 8);
+   this.password = hash;
+   next();
+})
 
 const User = mongoose.model('User', userSchema);
 
