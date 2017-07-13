@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
 //require models
-const testCollection = require('./models/testCollection.js');
+// const testCollection = require('./models/testCollection.js');
 const User = require('./models/user.js');
 // const Activity = require('./models/activity.js');
 
@@ -35,6 +35,38 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// *************user instances to apply auth************
+// var newUser = new User({name: "zoe", password: "zero"});
+// newUser.save(function(err) {
+//   if (err) throw err;
+//   console.log('user created!');
+// });
+//
+// console.log(newUser);
+// *************another user*****************
+// var newUser = new User({name: "pancakes", password: "syrup"});
+// newUser.save(function(err) {
+//   if (err) throw err;
+//   console.log('user created!');
+// });
+//
+// console.log(newUser);
+// *************and another user***************
+// var newUser = new User({name: "waffles", password: "molasses"});
+// newUser.save(function(err) {
+//   if (err) throw err;
+//   console.log('user created!');
+// });
+//
+// console.log(newUser);
+
+
+
+
+
+
+
 // // use routes
 // app.use('/api', require('./routes/users'));
 app.use('/', require('./routes/index'));
@@ -55,28 +87,16 @@ app.use('/', require('./routes/index'));
 // })
 
 // NOTE: testCollection: querying all ***********
-app.get('/api/testCollection', function (req, res) {
-   testCollection.find().then(result =>{
-      res.json(result);
-   })
-})
+// app.get('/api/testCollection', function (req, res) {
+//    testCollection.find().then(result =>{
+//       res.json(result);
+//    })
+// })
+
+
+
 
 
 app.listen(3000, function() {
    console.log('Listening on port 3000...');
 });
-
-
-
-
-
-
-
-// var newVendor = new Vendor({name: "zoe", password: "zero"});
-// newVendor.save(function(err) {
-//   if (err) throw err;
-//
-//   console.log('vendor created!');
-// });
-//
-// console.log(newVendor);
