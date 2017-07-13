@@ -1,19 +1,17 @@
-// app reqs
 const express = require('express');
 
-// mongoose and connection
+// require mongoose
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-//module.exports connection
+//require models
 const testCollection = require('./models/testCollection.js');
+const User = require('./models/user.js');
+// const Activity = require('./models/activity.js');
 
-
-// const Customer = require('./models/customer.js');
-// const Item = require('./models/item.js');
-// const Vendor = require('./models/vendor.js');
-// const customerRouter = require('./routes/customers');
-// const venderRouter = require('./routes/vendors');
+// require routes
+const indexRouter = require('./routes/index');
+// const routes = require('./routes/routes')
 
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -23,84 +21,62 @@ const bodyParser = require('body-parser');
 // const BasicStrategy = require('passport-http').BasicStrategy;
 // const bcrypt = require('bcryptjs');
 
+// mongoose connection
 mongoose.connect('mongodb://localhost:27017/stattracker');
-// console.log('CONNECTED ON THA PORT');
+console.log('CONNECTED ON THA PORT');
 var db = mongoose.connection;
 console.log(db);
-
 
 // app set up
 const app = express();
 
-
-
-
-
-
-const express = require('express');
-const bodyParser = require('body-parser');
-const app = express();
-
-
-// connect to mongoose
-// from lecture notes VVV
-const mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
-mongoose.connect('mongodb://localhost:27017/stattracker');
-
-// from online tutorial VVV
-var db = mongoose.connection;
-// console.log(db);
-
-
 // middleware
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// // use routes
+// app.use('/api', require('./routes/users'));
+app.use('/', require('./routes/index'));
 
 
-// routes
-app.get('/', function(req, res) {
-   res.send('Please use : /api/activities to access your tracked activities')
-});
-
-var testCollection = new Recipe({name: "Pancakes"});
-recipe.ingredients.push({ingredient: 'sugar', measure: " Tbsp"});
-console.log(recipe.toObject());
 
 // route for proj *****
 // app.get('/api/activities', function(req,res) {
 //
 // });
 
-
-// THIS ONE ********
+// NOTE: testCollection: querying one  ********
 // app.get('/api/testCollection', function (req, res) {
 //    console.log(testCollection.findOne({"name": "Cow"}));
 //    testCollection.findOne({"name": "Cow"}).then(result =>{
 //       res.json(result);
 //    })
 // })
-// verdict: you'd started two instances of mongo. write to the one via brew services.
 
+// NOTE: testCollection: querying all ***********
 app.get('/api/testCollection', function (req, res) {
-   console.log(testCollection.find());
    testCollection.find().then(result =>{
       res.json(result);
    })
 })
 
 
-// app.get('/api/testCollection', function (req, res) {
-//    testCollection.gettestCollections(function(err, testCollection) {
-//       if(err) {
-//          console.log(err);
-//          // throw err;
-//       }
-//       res.json(testCollection);
-//    })
-// })
-
-
 app.listen(3000, function() {
    console.log('Listening on port 3000...');
 });
+
+
+
+
+
+
+
+// var newVendor = new Vendor({name: "zoe", password: "zero"});
+// newVendor.save(function(err) {
+//   if (err) throw err;
+//
+//   console.log('vendor created!');
+// });
+//
+// console.log(newVendor);
