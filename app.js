@@ -7,7 +7,7 @@ mongoose.Promise = require('bluebird');
 //require models
 // const testCollection = require('./models/testCollection.js');
 const User = require('./models/user.js');
-// const Activity = require('./models/activity.js');
+const Activity = require('./models/activity.js');
 
 // require routes
 const indexRouter = require('./routes/index');
@@ -38,65 +38,110 @@ app.use(express.static(path.join(__dirname, 'public')));
 // *************user instances to apply auth************
 // var newUser = new User({name: "zoe", password: "zero"});
 // newUser.save(function(err) {
-//   if (err) throw err;
+//   if (err) { throw err; };
 //   console.log('user created!');
 // });
 //
 // console.log(newUser);
-// *************another user*****************
-// var newUser = new User({name: "pancakes", password: "syrup"});
-// newUser.save(function(err) {
-//   if (err) throw err;
-//   console.log('user created!');
-// });
+
+// // *************activity instances************
+// var newActivity = new Activity({ name: "authorizationFAILS", user: "zoe", log:[{ stat: 99, date: new Date()}]});
 //
-// console.log(newUser);
-// *************and another user***************
-// var newUser = new User({name: "waffles", password: "molasses"});
-// newUser.save(function(err) {
-//   if (err) throw err;
-//   console.log('user created!');
+// newActivity.save(function(err) {
+//   if (err) {
+//     throw err;
+//   }
+//   console.log('Activity Created!');
+// }).then(function(newActivity) {
+//    console.log(newActivity);
 // });
+
+
+
+//?? **************?? activity documents ??******************??
+// var log = function(req, res) {
+//    Activity.findOne({name: "authorizationFAILS"})
+//     .then(function (activity) {
+//          activity.log.push({
+//            stat: 88,
+//            date: new Date()
+//          })
+//          activity.save()
+//          .then(function (activity) {
+//          res.json(activity.toJSON());
+//          })
+//     })
+//     .catch(function (err) {
+//       res.send("error, diagnose and try again", err);
+//       });
+//    return
+// }
 //
-// console.log(newUser);
+
+
+
+
+
+
+
+
+
+
+
+
+// // NOTE: commented for now: find another auth. DEMO AUTH/ BCRYPT ISN'T WORKING VVVVV
+// passport.use(new BasicStrategy(
+//   function(username, password, done) {
+//      console.log(username, password);
+//     User.findOne({ name: username }, function(err, user){
+//       console.log("FOUND A MATCH: " + user);
+//       if (user && bcrypt.compareSync(password, user.password)){
+//          console.log('YOU SHALL PASS: ' + user)
+//         return done(null, user);
+//       }
+//       return done(null, false);
+//     });
+//   }
+// ));
 
 // // use routes
-// app.use('/api/', require('./routes/routes'));
-// app.use('/', require('./routes/index'));
+app.use('/', indexRouter);
 
-app.get('/api/', function (req, res) {
-   res.redirect('/api/auth');
-})
+// // maybe delete
+// app.get('/api/', function (req, res) {
+//    // res.redirect('/api/auth');
+//    // NOTE: use ^ when you can find something other than bcrypt
+//    // NOTE: use v while you are setting up routes.
+//    res.render()
+// })
 
-passport.use(new BasicStrategy(
-  function(username, password, done) {
-     console.log(username, password);
-    User.findOne({ name: username }, function(err, user){
-      console.log("FOUND A MATCH: " + user);
-      if (user && bcrypt.compareSync(password, user.password)){
-         console.log('YOU SHALL PASS: ' + user)
-        return done(null, user);
-      }
-      return done(null, false);
-    });
-  }
-));
-
-app.get('/api/auth',
-  passport.authenticate('basic', {session: false}), function (req, res) {
-      res.send('You have been authenticated, ' + req.user.username);
-  }
-);
+// app.get('/api/auth',
+//   passport.authenticate('basic', {session: false}), function (req, res) {
+//       // res.send('You have been authenticated, ' + req.user.username);
+//       console.log(req.user.username);
+//       console.log(user.name);
+//       res.json(req.user);
+//   }
+// );
 
 
+// NOTE: querying all from db **********
+app.get('/api/god/users', function( req, res) {
+   User.find().then( result =>{
+      res.json(result);
+   });
+});
 
+app.get('/api/god/activities', function( req, res) {
+   Activity.find().then( result =>{
+      res.json(result);
+   });
+});
 
+app.listen(3000, function() {
+   console.log('Listening on port 3000...');
+});
 
-
-// route for proj *****
-// app.get('/api/activities', function(req,res) {
-//
-// });
 
 // NOTE: testCollection: querying one  ********
 // app.get('/api/testCollection', function (req, res) {
@@ -112,9 +157,3 @@ app.get('/api/auth',
 //       res.json(result);
 //    })
 // })
-
-
-
-app.listen(3000, function() {
-   console.log('Listening on port 3000...');
-});
