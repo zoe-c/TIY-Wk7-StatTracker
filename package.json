@@ -14,9 +14,12 @@
     "body-parser": "^1.17.2",
     "cookie-parser": "~1.4.3",
     "express": "^4.15.3",
+    "json-format": "^1.0.1",
     "login-mongo": "^1.2.0",
     "mongodb": "^2.2.30",
     "mongoose": "^4.10.8",
+    "mustache": "^2.3.0",
+    "mustache-express": "^1.2.5",
     "passport": "^0.3.2",
     "passport-http": "^0.3.0"
   }
