@@ -9,7 +9,6 @@ const activitySchema = new mongoose.Schema({
       stat: Number,
       date: { type: Date, default: Date.now }
    }]
-   //  userId: req.session.userId (?)
 })
 
 const Activity = mongoose.model('Activity', activitySchema);

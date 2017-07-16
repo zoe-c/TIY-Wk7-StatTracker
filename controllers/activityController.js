@@ -1,7 +1,8 @@
 
-var mongoose = require('mongoose'),
-Activity = mongoose.model('Activity');
-// const Activity = require('../models/activity.js')
+const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
+const Activity = require('../models/activity.js');
+var exports = module.exports = {};
 
 exports.show_all_activities = function(req, res) {
   Activity.find({}, function(err, activity) {
@@ -10,22 +11,22 @@ exports.show_all_activities = function(req, res) {
     res.json(activity);
   });
 };
-// // NOTE: TRY: possible to use "result" in place of passing "activity"
-// exports.list_all_activities = function(req, res) {
-//    Activity.find({}, function(err, result) {
-//       if (err) {
-//          res.send(err);
-//       }
-//       res.json(result);
-//    });
-// };
-// // NOTE: shorter v you've used for listing all activities
-// Activity.find().then( result =>{
-//    res.json(result);
-// });
+// NOTE: TRY: possible to use "result" in place of passing "activity"
+exports.list_all_activities = function(req, res) {
+   Activity.find({}, function(err, result) {
+      if (err) {
+         res.send(err);
+      }
+      res.json(result);
+   });
+};
+// NOTE: shorter v you've used for listing all activities
+Activity.find().then( result =>{
+   res.json(result);
+});
 
 
-exports.create_activity = function(req, res) {
+module.exports.create_activity = function(req, res) {
   var new_activity = new Activity(req.body);
   new_activity.save(function(err, activity) {
     if (err)
@@ -46,7 +47,7 @@ exports.create_activity = function(req, res) {
 // }
 
 
-exports.show_one_activity = function(req, res) {
+module.exports.show_one_activity = function(req, res) {
   Activity.findById(req.params.activityId, function(err, activity) {
     if (err)
       res.send(err);
@@ -55,7 +56,7 @@ exports.show_one_activity = function(req, res) {
 };
 
 
-exports.update_activity = function(req, res) {
+module.exports.update_activity = function(req, res) {
   Activity.findOneAndUpdate({_id: req.params.activityId}, req.body, {new: true}, function(err, activity) {
     if (err)
       res.send(err);
@@ -63,28 +64,8 @@ exports.update_activity = function(req, res) {
   });
 };
 
-exports.add_data_to_activity_log = function(req, res) {
-      Activity.findOne({_id: req.params.activityId})
-       .then(function (activity) {
-            activity.log.push({
-              stat: num,
-              date: new Date()
-            //   would this be req.body?, {new: true}
-            })
-            activity.save()
-            .then(function (activity) {
-            res.json(activity.toJSON());
-            // res.json(activity);
-            })
-       })
-       .catch(function (err) {
-         res.send("error, diagnose and try again", err);
-         });
-      return
-   }
-}
 
-exports.delete_activity = function(req, res) {
+module.exports.delete_activity = function(req, res) {
   Activity.remove({
     _id: req.params.activityId
 }, function(err, activity) {
@@ -93,3 +74,42 @@ exports.delete_activity = function(req, res) {
     res.json({ message: 'Activity has been deleted' });
   });
 };
+// 
+// module.exports.add_stat_to_activity_log = function(req, res) {
+//    Activity.findOne({_id: req.params.activityId})
+//       .then(function (activity) {
+//          activity.log.push({
+//             stat: req.body.stat,
+//             date: req.body.date
+//             //  this wouldn't be new Date()...in the case user was editing an existing logged stat for a different day.
+//             })
+//          activity.save()
+//          .then(function (activity) {
+//             res.json(activity.toJSON());
+//             // res.json(activity);
+//          })
+//        })
+//       .catch(function (err) {
+//          res.send("error, diagnose and try again", err);
+//       });
+//    return
+// }
+//
+//
+//
+// module.exports.delete_stat_from_activity_log = function(req, res) {
+//       Activity.findOne({_id: req.params.activityId})
+//        .then(function (activity) {
+//             activity.log.remove({
+//               date: req.body.date
+//             })
+//          })
+//        .then(function() {
+//          res.send('Stat was successfully removed from your activity log')
+//        })
+//        .catch(function (err) {
+//          res.send("Error interception, please try again", err);
+//          });
+//       return
+//    }
+// }

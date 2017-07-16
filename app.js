@@ -1,40 +1,37 @@
 const express = require('express');
-const mongoose = require('mongoose');
-mongoose.Promise = require('bluebird');
-
-const User = require('./models/user.js');
-const Activity = require('./models/activity.js');
-// const router = express.Router();
-
-const indexRouter = require('./routes/index');
-// const userRouter = require('./routes/users')
-// const routes = require('./routes/routes')
-
 const path = require('path');
+// const parseurl = require('parseurl');
 const bodyParser = require('body-parser');
-const mustache = require('mustache-express');
-
+// const mustache = require('mustache-express');
 const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
-const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 
 // mongoose connection
 mongoose.connect('mongodb://localhost:27017/stattracker');
 var db = mongoose.connection;
-console.log(db);
+// console.log(db);
+const User = require('./models/user.js');
+const Activity = require('./models/activity.js');
+// const router = express.Router();
+const indexRouter = require('./routes/index');
+// const activityRouter = require('./routes/activityRoutes');
+const bcrypt = require('bcryptjs');
 
 const app = express();
 
+
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.engine('mustache', mustache());
-app.set('view engine', 'mustache');
-app.set('views','./views');
+// views---------
+// app.engine('mustache', mustache());
+// app.set('view engine', 'mustache');
+// app.set('views','./views');
 
-
-// NOTE: PASSPORT BASIC API AUTH STRATEGY + BCRYPT/HASH from demo---------------
+// NOTE: PASSPORT BASIC---------------------
 passport.use(new BasicStrategy(
   function(username, password, done) {
    //   console.log(username, password);
@@ -54,13 +51,9 @@ app.get('/api/auth',
       res.send('You have been authenticated, ' + req.user.name);
   }
 );
-
-// -----------------------------------------------------------------------------
-
+// ------------------------------------------
 app.use('/', indexRouter);
-// app.use('/api/activities', routes);
-
-
+// ------------------------------------------
 
 app.listen(3000, function() {
    console.log('Listening on port 3000...');
