@@ -35,9 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // NOTE: PASSPORT BASIC---------------------
 passport.use(new BasicStrategy(
   function(username, password, done) {
-   //   console.log(username, password);
     User.findOne({ name: username }, function(err, user) {
-      // console.log("FOUND A MATCH: " + user);
       if (user && bcrypt.compareSync(password, user.password)) {
          // console.log('YOU SHALL PASS: ' + user)
         return done(null, user);
