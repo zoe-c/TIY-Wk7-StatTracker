@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-// const parseurl = require('parseurl');
+const parseurl = require('parseurl');
 const bodyParser = require('body-parser');
 // const mustache = require('mustache-express');
 const passport = require('passport');
@@ -16,7 +16,7 @@ const User = require('./models/user.js');
 const Activity = require('./models/activity.js');
 // const router = express.Router();
 const indexRouter = require('./routes/index');
-// const activityRouter = require('./routes/activityRoutes');
+const activityRouter = require('./routes/activityRoutes');
 const bcrypt = require('bcryptjs');
 
 const app = express();
@@ -53,6 +53,7 @@ app.get('/api/auth',
 );
 // ------------------------------------------
 app.use('/', indexRouter);
+app.use('/api', activityRouter);
 // ------------------------------------------
 
 app.listen(3000, function() {
