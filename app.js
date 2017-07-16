@@ -10,6 +10,7 @@ mongoose.Promise = require('bluebird');
 
 // mongoose connection
 mongoose.connect('mongodb://localhost:27017/stattracker');
+// mongoose.connect('mongodb://localhost:27017/stattracker', { config: { autoIndex: false } });
 var db = mongoose.connection;
 // console.log(db);
 const User = require('./models/user.js');

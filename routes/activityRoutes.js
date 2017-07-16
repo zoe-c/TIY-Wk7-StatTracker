@@ -41,48 +41,37 @@ router.post('/activities', passport.authenticate('basic', {session:false}), func
                                     // 	"log": [{"stat": 1}]
                                     // }
 
-// ---------------------------------------v2
-   //    Activity.create({
-   //     name: req.body.name,
-   //     user: req.body.user,
-   //     log: [{ stat: req.body.stat, date : new Date() }]
-   //   })
-   //   .then(activity =>{
-   //    //  res.redirect('/api/activities')
-   //       res.json(activity)
-   //    })
-   //    .catch(function (err) {
-   //       res.send("error interception, please try again", err);
-   //   })
+// NOTE: try tomorrow with a mustache form!!!----------------------------------------------------
+//    Activity.create({
+//     name: req.body.activity_name,
+//     user: req.body.user,
+//     log: [{ stat: req.body.stat, date : new Date() }]
+//   })
+//   .then(activity =>{//    //  res.redirect('/api/activities')
+//       res.json(activity)
+//    })
+//    .catch(function (err) {
+//       res.send("error interception, please try again", err);
+//   })
 // ---------------------------------------v1
-  //  const activityName = req.body.name
-  //  const activityStat = req.body.stat
-  //  const newActivity = new Activity({
-  //        name: activityName,
-  //        user: req.user.name,
-  //        log: [{ stat: activityStat, date : new Date() }]
-  //     });
-  //
-  //  newActivity.save(function(err, activity) {
-  //    if (err) {
-  //      res.send(err);
-  //    }
-  //    console.log('Activity Created!!> ' + activity);
-  //    res.json(activity);
-  // });
+//  const activityName = req.body.name
+//  const activityStat = req.body.stat
+//  const newActivity = new Activity({
+//        name: activityName,
+//        user: req.user.name,
+//        log: [{ stat: activityStat, date : new Date() }]
+//     });
+//
+//  newActivity.save(function(err, activity) {
+//    if (err) {
+//      res.send(err);
+//    }
+//    console.log('Activity Created!!> ' + activity);
+//    res.json(activity);
+// });
 
 });
 
-
-// activity routes
-
-//    app.route('/api/activities/:activityId/stats')
-//       .post(Activity.add_stat_to_activity_log);
-//
-//    app.route('/api/activities/:activityId/stats/:statId')
-//       .delete(Activity.delete_stat_from_activity_log);
-//
-// };
 
 // successful query by id
 router.get('/activities/:activityId', passport.authenticate('basic', {session:false}), function(req, res) {
@@ -94,24 +83,52 @@ router.get('/activities/:activityId', passport.authenticate('basic', {session:fa
    });
 });
 
+// changing activity only, not the tracked data
 router.put('/activities/:activityId', passport.authenticate('basic', {session:false}), function(req, res) {
-   Activity.findOneAndUpdate({ _id: req.params.activityId },
-      req.body, {new: true},
-      function(err, activity) {
-         if(err) {
-           res.send(err)
-         }
-         console.log(activity);
-         res.json(activity);
-      }
-   );
-}
+   Activity.findById(req.params.activityId)
+     .then(function (activity) {
+      activity.name = req.body.name;
+      activity.save()
+         .then(function (activity) {
+           console.log("activity updated successfully")
+           res.json(activity);
+         })
+         .catch(function (err) {
+           res.send(err);
+         })
+   })
 
-// function(req, res) {
-//    Activity.findOne({_id: req.params.activityId}).
-// }
 
-);
+
+
+
+   // activity routes
+
+      app.route('/api/activities/:activityId/stats')
+         .post(Activity.add_stat_to_activity_log);
+
+      app.route('/api/activities/:activityId/stats/:statId')
+         .delete(Activity.delete_stat_from_activity_log);
+
+   };
+
+
+   // Activity.findOneAndUpdate({ _id: req.params.activityId },
+   //    req.body, {new: true},
+   //    function(err, activity) {
+   //       if(err) {
+   //         res.send(err)
+   //       }
+   //       console.log(activity);
+   //       res.json(activity);
+   //    }
+   // );
+
+   // //LECTURE NOTES METHOD-----------------------------
+   // Activity.updateOne({_id: req.params.activityId},
+   //   {$push: {name:"" }})
+
+});
 
 
 router.delete('/activities/:activityId', function (req, res) {
@@ -134,5 +151,47 @@ router.delete('/activities/:activityId', function (req, res) {
    });
 });
 
-
 module.exports = router;
+
+
+
+
+
+
+//---------rest of functions from collections-------------------------------
+// module.exports.add_stat_to_activity_log = function(req, res) {
+//    Activity.findOne({_id: req.params.activityId})
+//       .then(function (activity) {
+//          activity.log.push({
+//             stat: req.body.stat
+//             })
+//          activity.save()
+//          .then(function (activity) {
+//             res.json(activity.toJSON());
+//             // res.json(activity);
+//          })
+//        })
+//       .catch(function (err) {
+//          res.send("error, diagnose and try again", err);
+//       });
+//    return
+// }
+//
+//
+//
+// module.exports.delete_stat_from_activity_log = function(req, res) {
+//       Activity.findOne({_id: req.params.activityId})
+//        .then(function (activity) {
+//             activity.log.remove({
+//               date: req.body.date
+//             })
+//          })
+//        .then(function() {
+//          res.send('Stat was successfully removed from your activity log')
+//        })
+//        .catch(function (err) {
+//          res.send("Error interception, please try again", err);
+//          });
+//       return
+//    }
+// }
