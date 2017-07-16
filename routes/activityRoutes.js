@@ -36,22 +36,24 @@ router.get('/activities', passport.authenticate('basic', {session:false}), funct
    });
 });
 
-router.post('/activities', passport.authenticate('basic', {session:false}), function(req, res) {
+router.post('/activities', function(req, res) {
    var newActivity = new Activity({
-         name: req.body.activity,
-         user: req.user.name,
-         log:[{ stat: req.body.stat, date: new Date()
-      }]});
+         name: req.body.activity_name,
+         user: req.body.user,
+      //    log:[{ stat: req.body.stat, date: new Date()
+      // }]});
+         log: req.body.log
+      });
 
    newActivity.save(function(err, activity) {
      if (err) {
-       throw err;
+       res.send(err);
      }
      console.log('Activity Created!!> ' + activity);
      res.json(activity);
   });
 });
 
-
+// passport.authenticate('basic', {session:false})
 
 module.exports = router;
