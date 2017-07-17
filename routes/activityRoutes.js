@@ -1,5 +1,4 @@
 const express = require('express');
-// const app = express();
 const path = require('path');
 const router = express.Router();
 const parseurl = require('parseurl');
@@ -8,9 +7,6 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 const Activity = require('../models/activity.js');
-
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: true }));
 
 
 // NOTE: success: query all activities
@@ -23,9 +19,8 @@ router.get('/activities', passport.authenticate('basic', {session:false}), funct
    });
 });
 
-// NOTE: POST WORKS >>> but only when you send request in json
+// NOTE: POST WORKS. note to self > get used to postman and select the correct format for your req.body.
 router.post('/activities', passport.authenticate('basic', {session:false}), function(req, res) {
-   // -------------------------------------------REQUEST SENT IN JSON
    var newActivity = new Activity(req.body);
    newActivity.save(function(err, activity) {
       if(err) {
@@ -35,11 +30,11 @@ router.post('/activities', passport.authenticate('basic', {session:false}), func
       res.json(activity);
 
    });
+
 });
    // ----------------------------------------------REQUEST SENT IN FORM DATA. NOT WORKING: try again.
-//   const input = req.body;
 //   var newActivity = new Activity({
-//      name: input.name,
+//      name: req.body.name,
 //      user: req.user.name
 //   });
 //   newActivity.save(function(err, activity) {
@@ -50,6 +45,7 @@ router.post('/activities', passport.authenticate('basic', {session:false}), func
 //    //   res.redirect('/activities')
 //     res.send("Activity added");
 //  });
+
 
 // NOTE: success: query activity by id
 router.get('/activities/:activityId', passport.authenticate('basic', {session:false}), function(req, res) {
@@ -126,18 +122,16 @@ router.post('/activities/:activityId/stats', passport.authenticate('basic', {ses
 });
 
 
-// NOTE: DELETE:/stats/{id}--Remove tracked data for a day.
+// NOTE: DELETE:/stats/{id}--Remove tracked data for a day......fix
 router.delete('/activities/:activityId/stats/:statId', passport.authenticate('basic', {session:false}), function (req, res) {
-
    Activity.find({ _id: req.params.activityId })
    .then(function(activity) {
-      Activity.log.findOneAndRemove({ _id: req.params.statId})
+      Activity.findOneAndRemove({ _id: req.params.statId})
       .then(function(err, activity) {
          if (err) {
             console.log(err);
          }
          console.log("stat deleted!");
-         // res.send("stat deleted!")
          res.json(activity);
       })
       .catch(function(err) {
@@ -145,6 +139,20 @@ router.delete('/activities/:activityId/stats/:statId', passport.authenticate('ba
       });
    });
 });
+
+
+// NOTE: ANOTHER ATTEMPT NOT WORKING
+// router.delete('/stat/:id', passport.authenticate('basic', {session:false}), function (req, res) {
+//    Activity.findById(req.params.id, function (err, activity) {
+//      if (!err) {
+//        activity.log.remove({_id: req.params.id });
+//        activity.save(function (err) {
+//          console.log(err)
+//          res.send(err)
+//        });
+//      }
+//    });
+// });
 
 // NOTE: ATTEMPT/ NOT WORKING
 // Activity.log.remove({ _id: req.params.statId})
