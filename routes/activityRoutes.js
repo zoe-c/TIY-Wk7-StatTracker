@@ -31,21 +31,13 @@ router.post('/activities', passport.authenticate('basic', {session:false}), func
 
    });
 
-});
-   // ----------------------------------------------REQUEST SENT IN FORM DATA. NOT WORKING: try again.
-//   var newActivity = new Activity({
+//ALTERNATIVE instance k/v assignment vs general/ targeting whole "req.body"
+// var newActivity = new Activity({
 //      name: req.body.name,
 //      user: req.user.name
 //   });
-//   newActivity.save(function(err, activity) {
-//      if(err) {
-//         res.send(err)
-//      }
-//      console.log(activity);
-//    //   res.redirect('/activities')
-//     res.send("Activity added");
-//  });
 
+});
 
 // NOTE: success: query activity by id
 router.get('/activities/:activityId', passport.authenticate('basic', {session:false}), function(req, res) {
@@ -122,27 +114,51 @@ router.post('/activities/:activityId/stats', passport.authenticate('basic', {ses
 });
 
 
-// NOTE: DELETE:/stats/{id}--Remove tracked data for a day......fix
-router.delete('/activities/:activityId/stats/:statId', passport.authenticate('basic', {session:false}), function (req, res) {
-   Activity.find({ _id: req.params.activityId })
-   .then(function(activity) {
-      Activity.findOneAndRemove({ _id: req.params.statId})
-      .then(function(err, activity) {
-         if (err) {
-            console.log(err);
-         }
-         console.log("stat deleted!");
-         res.json(activity);
-      })
-      .catch(function(err) {
-         res.send("Please try again: ", err)
-      });
-   });
+
+
+// *****  TRIED SEVERAL DIFFERENT WAYS/ NO LUCK FOR DELETING STATS, ONLY ADDING THEM.
+// ADVICE WAS:
+      // create sep model for stats, link them (populate perhaps? talk of the town. check this).
+      //
+// NOTE: ANOTHER ATTEMPT NOT WORKING--------------------------------------
+router.delete('activities/:activityId/stats/:statId', passport.authenticate('basic', {session:false}), function (req, res) {
+   Activity.findOne({_id: req.params.activityId})
+         .then(function (activity) {
+            Activity.update(
+               { $pull: { log: { $elemMatch: { _id: req.params.statId} } } });
+               // stat: req.body.stat,
+               // date: req.body.date
+            });
+            Activity.save(function(err, activity) {
+               if (err){
+                  console.log("OH NO!: ", err)
+                  res.send(err);
+               }
+               res.json(activity);
+            });
+
+
 });
 
+// NOTE: DELETE:/stats/{id}--Remove tracked data for a day......fix
+// router.delete('/activities/:activityId/stats/:statId', passport.authenticate('basic', {session:false}), function (req, res) {
+//    Activity.find({ _id: req.params.activityId })
+//    .then(function(activity) {
+//       Activity.findOneAndRemove({ _id: req.params.statId})
+//       .then(function(err, activity) {
+//          if (err) {
+//             console.log(err);
+//          }
+//          console.log("stat deleted!");
+//          res.json(activity);
+//       })
+//       .catch(function(err) {
+//          res.send("Please try again: ", err)
+//       });
+//    });
+// });
 
-// NOTE: ANOTHER ATTEMPT NOT WORKING
-// router.delete('/stat/:id', passport.authenticate('basic', {session:false}), function (req, res) {
+// NOTE: ANOTHER ATTEMPT NOT WORKING--------
 //    Activity.findById(req.params.id, function (err, activity) {
 //      if (!err) {
 //        activity.log.remove({_id: req.params.id });
