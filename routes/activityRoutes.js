@@ -114,70 +114,46 @@ router.post('/activities/:activityId/stats', passport.authenticate('basic', {ses
 });
 
 
-
-
-// *****  TRIED SEVERAL DIFFERENT WAYS/ NO LUCK FOR DELETING STATS, ONLY ADDING THEM.
-// ADVICE WAS:
-      // create sep model for stats, link them (populate perhaps? talk of the town. check this).
-      //
-// NOTE: ANOTHER ATTEMPT NOT WORKING--------------------------------------
-router.delete('activities/:activityId/stats/:statId', passport.authenticate('basic', {session:false}), function (req, res) {
-   Activity.findOne({_id: req.params.activityId})
+// finds the activity by its id
+router.get('/stats/:id', passport.authenticate('basic', {session:false}), function (req, res) {
+   let activityId = req.params.id;
+   Activity.findById({ _id: activityId })
          .then(function (activity) {
-            Activity.update(
-               { $pull: { log: { $elemMatch: { _id: req.params.statId} } } });
-               // stat: req.body.stat,
-               // date: req.body.date
-            });
-            Activity.save(function(err, activity) {
-               if (err){
-                  console.log("OH NO!: ", err)
-                  res.send(err);
-               }
-               res.json(activity);
-            });
-
+            res.json(activity)
+            // res.send(JSON.parse(activity.log))
+         })
+         .catch(function(err) {
+            res.send(err)
+         })
 
 });
 
-// NOTE: DELETE:/stats/{id}--Remove tracked data for a day......fix
-// router.delete('/activities/:activityId/stats/:statId', passport.authenticate('basic', {session:false}), function (req, res) {
-//    Activity.find({ _id: req.params.activityId })
-//    .then(function(activity) {
-//       Activity.findOneAndRemove({ _id: req.params.statId})
-//       .then(function(err, activity) {
-//          if (err) {
-//             console.log(err);
-//          }
-//          console.log("stat deleted!");
-//          res.json(activity);
-//       })
-//       .catch(function(err) {
-//          res.send("Please try again: ", err)
-//       });
-//    });
-// });
 
-// NOTE: ANOTHER ATTEMPT NOT WORKING--------
-//    Activity.findById(req.params.id, function (err, activity) {
-//      if (!err) {
-//        activity.log.remove({_id: req.params.id });
-//        activity.save(function (err) {
-//          console.log(err)
-//          res.send(err)
-//        });
-//      }
-//    });
-// });
+// deletes stat by id from "log" (array of stats within the activity)
+router.delete('/stats/:id/:statId', passport.authenticate('basic', {session:false}), function (req, res) {
+   let activityId = req.params.id;
+   let statId = req.params.statId;
+   Activity.findById({ _id: activityId }, function(err) {
+      console.log(err)
+   })
+         .then(function (activity) {
+            let log = activity.log
+            activity.log.remove({
+               _id: statId
+            })
+            activity.save(function(err, activity){
+               if (err) {
+                  console.log(err)
+               }
+               res.json(activity);
+            })
 
-// NOTE: ATTEMPT/ NOT WORKING
-// Activity.log.remove({ _id: req.params.statId})
-// .then(function() {
-//    res.send('stat deleted')
-// })
-// .catch(function(err) {
-//    console.log(err)
-//    res.send('Please try again, error ocurred: ', err);
-// });
+         })
+         .catch(function(err) {
+            res.send(err)
+         })
+
+
+});
 
 module.exports = router;
