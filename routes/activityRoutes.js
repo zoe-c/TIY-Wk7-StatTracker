@@ -15,7 +15,9 @@ router.get('/activities', passport.authenticate('basic', {session:false}), funct
       if(err) {
          res.send(err);
       }
-      res.json(activities);
+      // first views
+      res.render('apiHome', {activities: activities});
+      // res.json(activities);
    });
 });
 

@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const parseurl = require('parseurl');
 const bodyParser = require('body-parser');
-// const mustache = require('mustache-express');
+const mustache = require('mustache-express');
 const passport = require('passport');
 const BasicStrategy = require('passport-http').BasicStrategy;
 const mongoose = require('mongoose');
@@ -28,9 +28,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // views---------
-// app.engine('mustache', mustache());
-// app.set('view engine', 'mustache');
-// app.set('views','./views');
+app.engine('mustache', mustache());
+app.set('view engine', 'mustache');
+app.set('views','./views');
 
 // NOTE: PASSPORT BASIC---------------------
 passport.use(new BasicStrategy(
